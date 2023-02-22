@@ -46,7 +46,7 @@ const fetchData = async (ticker, page_token) => {
 for (const ticker of tickers) {
     let body = await fetchData(ticker);
     await delay(requestInterval); // a bit less than the limit of 200 requests/min
-    console.log('successfully fetched bars')
+    console.log('successfully fetched bars for ' + ticker)
     let initial = true;
 
     while (body != null) {
@@ -62,7 +62,7 @@ for (const ticker of tickers) {
         if (body.next_page_token) {
             await delay(requestInterval); // a bit less than the limit of 200 requests/min
             body = await fetchData(ticker, body.next_page_token)
-            console.log('successfully fetched bars')
+            console.log('successfully fetched bars for ' + ticker + ', next page token: ' + body.next_page_token)
         }
         else
             break;
