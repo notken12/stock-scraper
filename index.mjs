@@ -9,7 +9,7 @@ const input = readFileSync(
 ).toString();
 const outputDir = process.env.OUTPUT_DIR || "./output/";
 
-const tickers = input.split("\n");
+const tickers = input.split("\n").map((s) => s.trim());
 
 const requestInterval = (60 / 200) * 1.1;
 
@@ -17,9 +17,9 @@ const delay = (s) => new Promise((resolve) => setTimeout(resolve, s * 1000));
 
 const fetchData = async (ticker, page_token) => {
   const paramsInit = {
-    start: process.env.START_DATE,
-    end: process.env.END_DATE,
-    limit: process.env.LIMIT,
+    start: process.env.START_DATE || "2022-01-01",
+    end: process.env.END_DATE || "2022-12-30",
+    limit: process.env.LIMIT || 10000,
     timeframe: process.env.TIMEFRAME || "1Min",
   };
   if (page_token) {
@@ -36,13 +36,14 @@ const fetchData = async (ticker, page_token) => {
       }),
     }
   ).catch((e) => {
-    console.log("Error fetching bars: " + e);
+    console.log("Error fetching bars for " + ticker + ": " + e);
   });
 
   const body = await res.json();
 
   if (!("bars" in body)) {
-    console.log("Error fetching bars, response body: " + JSON.stringify(body));
+    console.log("Error fetching bars for " + ticker);
+    console.log("Response body: " + JSON.stringify(body));
     return;
   }
 
